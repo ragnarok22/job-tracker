@@ -37,10 +37,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
 
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label
-              htmlFor="company"
-              className="block text-sm font-medium mb-1"
-            >
+            <label htmlFor="company" className="block text-sm font-medium mb-1">
               Company <span className="text-red-500">*</span>
             </label>
             <input

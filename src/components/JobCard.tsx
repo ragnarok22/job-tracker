@@ -10,8 +10,10 @@ interface JobCardProps {
 }
 
 export function JobCard({ job, isDragging }: JobCardProps) {
-  const isOverdue = job.nextActionDate && new Date(job.nextActionDate) < new Date();
-  const hasNoNextAction = job.stage !== "REJECTED" && job.stage !== "OFFER" && !job.nextActionDate;
+  const isOverdue =
+    job.nextActionDate && new Date(job.nextActionDate) < new Date();
+  const hasNoNextAction =
+    job.stage !== "REJECTED" && job.stage !== "OFFER" && !job.nextActionDate;
 
   return (
     <div
@@ -59,7 +61,9 @@ export function JobCard({ job, isDragging }: JobCardProps) {
       </div>
 
       {job.nextActionDate && (
-        <div className={`mt-2 text-xs flex items-center gap-1 ${isOverdue ? "text-red-600 font-medium" : "text-neutral-600"}`}>
+        <div
+          className={`mt-2 text-xs flex items-center gap-1 ${isOverdue ? "text-red-600 font-medium" : "text-neutral-600"}`}
+        >
           {isOverdue && <AlertCircle className="w-3 h-3" />}
           Next: {format(new Date(job.nextActionDate), "MMM d")}
         </div>
