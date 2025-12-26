@@ -24,20 +24,13 @@ export function ThemeProvider({
   defaultTheme = "system",
   storageKey = "job-tracker-theme",
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return defaultTheme;
     const stored = localStorage.getItem(storageKey) as Theme;
-    if (stored) {
-      setTheme(stored);
-    }
-  }, [storageKey]);
+    return stored || defaultTheme;
+  });
 
   useEffect(() => {
-    if (!mounted) return;
-
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
@@ -51,7 +44,7 @@ export function ThemeProvider({
     }
 
     root.classList.add(theme);
-  }, [theme, mounted]);
+  }, [theme]);
 
   const value = {
     theme,

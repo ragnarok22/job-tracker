@@ -2,7 +2,6 @@ import { format } from "date-fns";
 import { AlertCircle, ExternalLink } from "lucide-react";
 import type { JobApplication } from "@/lib/types";
 import { FEELING_EMOJI } from "@/lib/types";
-import Link from "next/link";
 
 interface JobCardProps {
   job: JobApplication;
