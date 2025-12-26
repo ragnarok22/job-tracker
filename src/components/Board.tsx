@@ -100,7 +100,7 @@ export function Board({ initialJobs }: BoardProps) {
           </div>
 
           <DragOverlay>
-            {activeJob ? <JobCard job={activeJob} isDragging /> : null}
+            {activeJob ? <JobCard job={activeJob} /> : null}
           </DragOverlay>
         </DndContext>
       </div>

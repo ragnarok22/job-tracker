@@ -5,10 +5,9 @@ import { FEELING_EMOJI } from "@/lib/types";
 
 interface JobCardProps {
   job: JobApplication;
-  isDragging?: boolean;
 }
 
-export function JobCard({ job, isDragging }: JobCardProps) {
+export function JobCard({ job }: JobCardProps) {
   const isOverdue =
     job.nextActionDate && new Date(job.nextActionDate) < new Date();
   const hasNoNextAction =
@@ -19,7 +18,6 @@ export function JobCard({ job, isDragging }: JobCardProps) {
       className={`
         bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-lg p-4
         hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing
-        ${isDragging ? "opacity-50" : ""}
         ${hasNoNextAction ? "border-l-4 border-l-amber-500 dark:border-l-amber-600" : ""}
       `}
     >

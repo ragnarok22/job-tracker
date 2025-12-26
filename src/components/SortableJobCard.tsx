@@ -20,11 +20,12 @@ export function SortableJobCard({ job }: SortableJobCardProps) {
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0 : 1,
   };
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <JobCard job={job} isDragging={isDragging} />
+      <JobCard job={job} />
     </div>
   );
 }
