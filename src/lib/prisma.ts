@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
-import { createClient } from "@libsql/client";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -9,10 +8,9 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma =
   globalForPrisma.prisma ??
   (() => {
-    const libsql = createClient({
-      url: `file:${process.cwd()}/dev.db`,
+    const adapter = new PrismaBetterSqlite3({
+      url: "file:./dev.db",
     });
-    const adapter = new PrismaLibSql(libsql);
     return new PrismaClient({ adapter });
   })();
 
