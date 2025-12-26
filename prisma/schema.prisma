@@ -2,10 +2,46 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
+}
+
+enum Stage {
+  WISHLIST
+  APPLIED
+  INTERVIEW
+  OFFER
+  REJECTED
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Feeling {
+  UP
+  NEUTRAL
+  DOWN
+}
+
+model JobApplication {
+  id             String    @id @default(uuid())
+  company        String
+  role           String?
+  stage          Stage     @default(WISHLIST)
+  appliedDate    DateTime?
+  lastUpdate     DateTime  @updatedAt
+  nextActionDate DateTime?
+  salaryRange    String?
+  priority       Priority  @default(MEDIUM)
+  feeling        Feeling   @default(NEUTRAL)
+  link           String?
+  notes          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
