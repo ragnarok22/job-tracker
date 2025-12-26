@@ -9,11 +9,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  closestCenter,
+  DragOverEvent,
 } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { JobCard } from "./JobCard";
 import { Column } from "./Column";
 import { QuickAddModal } from "./QuickAddModal";
-import { moveJobStage } from "@/app/actions";
+import { moveJobStage, reorderJobs } from "@/app/actions";
 import type { JobApplication, Stage } from "@/lib/types";
 import { STAGES, STAGE_LABELS } from "@/lib/types";
 import { Plus } from "lucide-react";
@@ -42,7 +45,9 @@ export function Board({ initialJobs }: BoardProps) {
 
   const jobsByStage: Record<Stage, JobApplication[]> = STAGES.reduce(
     (acc, stage) => {
-      acc[stage] = jobs.filter((job) => job.stage === stage);
+      acc[stage] = jobs
+        .filter((job) => job.stage === stage)
+        .sort((a, b) => a.order - b.order);
       return acc;
     },
     {} as Record<Stage, JobApplication[]>,
@@ -62,19 +67,126 @@ export function Board({ initialJobs }: BoardProps) {
       return;
     }
 
-    const jobId = active.id as string;
-    const targetStage = over.id as Stage;
+    const activeJobId = active.id as string;
+    const activeJob = jobs.find((job) => job.id === activeJobId);
 
-    if (targetStage && STAGES.includes(targetStage)) {
+    if (!activeJob) {
+      setActiveId(null);
+      return;
+    }
+
+    // Determine if we're dropping on a column or another job
+    const overId = over.id as string;
+    const isDroppedOnColumn = STAGES.includes(overId as Stage);
+
+    let targetStage: Stage;
+    let overJob: JobApplication | undefined;
+
+    if (isDroppedOnColumn) {
+      targetStage = overId as Stage;
+    } else {
+      overJob = jobs.find((job) => job.id === overId);
+      if (!overJob) {
+        setActiveId(null);
+        return;
+      }
+      targetStage = overJob.stage;
+    }
+
+    const sourceStage = activeJob.stage;
+    const isSameColumn = sourceStage === targetStage;
+
+    if (isSameColumn && !overJob) {
+      // Dropped on the same column container, no change
+      setActiveId(null);
+      return;
+    }
+
+    // Get jobs in target column
+    const targetJobs = jobs.filter((job) => job.stage === targetStage);
+
+    // Calculate new order
+    let newOrder: number;
+    let newJobs: JobApplication[];
+
+    if (isSameColumn && overJob) {
+      // Reordering within the same column
+      const oldIndex = targetJobs.findIndex((job) => job.id === activeJobId);
+      const newIndex = targetJobs.findIndex((job) => job.id === overJob.id);
+
+      const reorderedJobs = arrayMove(targetJobs, oldIndex, newIndex);
+
+      // Update all jobs in this column with new order
+      const updates = reorderedJobs.map((job, index) => ({
+        id: job.id,
+        order: index,
+        stage: targetStage,
+      }));
+
       // Optimistic update
-      setJobs((prevJobs) =>
-        prevJobs.map((job) =>
-          job.id === jobId ? { ...job, stage: targetStage } : job,
-        ),
-      );
+      newJobs = jobs.map((job) => {
+        const update = updates.find((u) => u.id === job.id);
+        return update ? { ...job, order: update.order } : job;
+      });
+
+      setJobs(newJobs);
 
       // Server update
-      await moveJobStage(jobId, targetStage);
+      await reorderJobs(updates);
+    } else {
+      // Moving to a different column
+      if (overJob) {
+        // Insert at specific position
+        const overIndex = targetJobs.findIndex((job) => job.id === overJob.id);
+        newOrder = overIndex;
+
+        // Update orders for jobs in target column
+        const updates = targetJobs
+          .filter((job) => job.id !== activeJobId)
+          .map((job, index) => {
+            const adjustedIndex = index >= overIndex ? index + 1 : index;
+            return {
+              id: job.id,
+              order: adjustedIndex,
+              stage: targetStage,
+            };
+          });
+
+        updates.push({
+          id: activeJobId,
+          order: newOrder,
+          stage: targetStage,
+        });
+
+        // Optimistic update
+        newJobs = jobs.map((job) => {
+          if (job.id === activeJobId) {
+            return { ...job, stage: targetStage, order: newOrder };
+          }
+          const update = updates.find((u) => u.id === job.id);
+          return update ? { ...job, order: update.order } : job;
+        });
+
+        setJobs(newJobs);
+
+        // Server update
+        await reorderJobs(updates);
+      } else {
+        // Dropped on column container, add to end
+        newOrder = targetJobs.length;
+
+        // Optimistic update
+        setJobs((prevJobs) =>
+          prevJobs.map((job) =>
+            job.id === activeJobId
+              ? { ...job, stage: targetStage, order: newOrder }
+              : job,
+          ),
+        );
+
+        // Server update
+        await moveJobStage(activeJobId, targetStage, newOrder);
+      }
     }
 
     setActiveId(null);
@@ -96,6 +208,7 @@ export function Board({ initialJobs }: BoardProps) {
 
         <DndContext
           sensors={sensors}
+          collisionDetection={closestCenter}
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >

@@ -64,18 +64,51 @@ export async function updateJob(
   revalidatePath("/offers");
 }
 
-export async function moveJobStage(id: string, stage: Stage) {
+export async function moveJobStage(
+  id: string,
+  stage: Stage,
+  newOrder?: number,
+) {
+  const updateData: any = {
+    stage,
+    lastUpdate: new Date(),
+  };
+
+  if (newOrder !== undefined) {
+    updateData.order = newOrder;
+  } else {
+    // If no order specified, put at the end of the target column
+    const maxOrder = await prisma.jobApplication.findFirst({
+      where: { stage },
+      orderBy: { order: "desc" },
+      select: { order: true },
+    });
+    updateData.order = (maxOrder?.order ?? -1) + 1;
+  }
+
   await prisma.jobApplication.update({
     where: { id },
-    data: {
-      stage,
-      lastUpdate: new Date(),
-    },
+    data: updateData,
   });
 
   revalidatePath("/");
   revalidatePath("/follow-up");
   revalidatePath("/offers");
+}
+
+export async function reorderJobs(
+  updates: { id: string; order: number; stage: Stage }[],
+) {
+  await prisma.$transaction(
+    updates.map((update) =>
+      prisma.jobApplication.update({
+        where: { id: update.id },
+        data: { order: update.order, stage: update.stage },
+      }),
+    ),
+  );
+
+  revalidatePath("/");
 }
 
 export async function deleteJob(id: string) {
@@ -90,7 +123,7 @@ export async function deleteJob(id: string) {
 
 export async function getAllJobs() {
   return await prisma.jobApplication.findMany({
-    orderBy: { lastUpdate: "desc" },
+    orderBy: [{ stage: "asc" }, { order: "asc" }],
   });
 }
 
