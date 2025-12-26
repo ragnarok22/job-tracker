@@ -72,7 +72,7 @@ export function JobCard({ job, isDragging }: JobCardProps) {
       )}
 
       {hasNoNextAction && (
-        <div className="mt-2 text-xs text-amber-600 font-medium flex items-center gap-1">
+        <div className="mt-2 text-xs text-amber-600 dark:text-amber-500 font-medium flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           No next action date
         </div>

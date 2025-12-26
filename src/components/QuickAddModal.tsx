@@ -23,13 +23,13 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-neutral-900 rounded-lg max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold">Quick Add Job</h2>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-neutral-600"
+            className="text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300"
           >
             <X className="w-5 h-5" />
           </button>
