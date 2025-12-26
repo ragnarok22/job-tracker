@@ -20,16 +20,16 @@ export function Column({ id, title, jobs, count }: ColumnProps) {
     <div
       ref={setNodeRef}
       className={`
-        flex flex-col h-full min-h-[500px] bg-neutral-100 rounded-lg p-4
+        flex flex-col h-full min-h-[500px] bg-neutral-100 dark:bg-neutral-800 rounded-lg p-4
         transition-colors
-        ${isOver ? "bg-blue-50 ring-2 ring-blue-400" : ""}
+        ${isOver ? "bg-blue-50 dark:bg-blue-900/30 ring-2 ring-blue-400 dark:ring-blue-500" : ""}
       `}
     >
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-sm uppercase tracking-wide text-neutral-600">
+        <h3 className="font-semibold text-sm uppercase tracking-wide text-neutral-600 dark:text-neutral-400">
           {title}
         </h3>
-        <span className="text-xs bg-neutral-200 px-2 py-1 rounded-full font-medium">
+        <span className="text-xs bg-neutral-200 dark:bg-neutral-700 px-2 py-1 rounded-full font-medium">
           {count}
         </span>
       </div>
