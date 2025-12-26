@@ -34,6 +34,7 @@ model JobApplication {
   company        String
   role           String?
   stage          Stage     @default(WISHLIST)
+  order          Int       @default(0)
   appliedDate    DateTime?
   lastUpdate     DateTime  @updatedAt
   nextActionDate DateTime?

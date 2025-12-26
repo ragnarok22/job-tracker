@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   DndContext,
   DragEndEvent,
@@ -23,8 +23,14 @@ interface BoardProps {
 }
 
 export function Board({ initialJobs }: BoardProps) {
+  const [jobs, setJobs] = useState(initialJobs);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Sync with server updates (e.g., when new jobs are added)
+  useEffect(() => {
+    setJobs(initialJobs);
+  }, [initialJobs]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -36,15 +42,13 @@ export function Board({ initialJobs }: BoardProps) {
 
   const jobsByStage: Record<Stage, JobApplication[]> = STAGES.reduce(
     (acc, stage) => {
-      acc[stage] = initialJobs.filter((job) => job.stage === stage);
+      acc[stage] = jobs.filter((job) => job.stage === stage);
       return acc;
     },
     {} as Record<Stage, JobApplication[]>,
   );
 
-  const activeJob = activeId
-    ? initialJobs.find((job) => job.id === activeId)
-    : null;
+  const activeJob = activeId ? jobs.find((job) => job.id === activeId) : null;
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
@@ -62,6 +66,14 @@ export function Board({ initialJobs }: BoardProps) {
     const targetStage = over.id as Stage;
 
     if (targetStage && STAGES.includes(targetStage)) {
+      // Optimistic update
+      setJobs((prevJobs) =>
+        prevJobs.map((job) =>
+          job.id === jobId ? { ...job, stage: targetStage } : job,
+        ),
+      );
+
+      // Server update
       await moveJobStage(jobId, targetStage);
     }
 
