@@ -11,14 +11,14 @@ export default async function FollowUpPage() {
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
         <h2 className="text-2xl font-bold">Follow-up Needed</h2>
-        <p className="text-sm text-neutral-600 mt-1">
+        <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
           Jobs that need action today or are overdue
         </p>
       </div>
 
       {jobs.length === 0 ? (
-        <div className="bg-white rounded-lg p-8 text-center">
-          <p className="text-neutral-500">
+        <div className="bg-white dark:bg-neutral-900 rounded-lg p-8 text-center">
+          <p className="text-neutral-500 dark:text-neutral-400">
             No jobs need follow-up at this time.
           </p>
         </div>
@@ -40,8 +40,8 @@ function JobRow({ job }: { job: JobApplication }) {
   return (
     <div
       className={`
-      bg-white border rounded-lg p-4
-      ${isOverdue ? "border-l-4 border-l-red-500" : "border-neutral-200"}
+      bg-white dark:bg-neutral-900 border rounded-lg p-4
+      ${isOverdue ? "border-l-4 border-l-red-500 dark:border-l-red-600" : "border-neutral-200 dark:border-neutral-800"}
     `}
     >
       <div className="flex items-start justify-between gap-4">
@@ -53,7 +53,7 @@ function JobRow({ job }: { job: JobApplication }) {
                 href={job.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-neutral-400 hover:text-blue-600"
+                className="text-neutral-400 dark:text-neutral-500 hover:text-blue-600 dark:hover:text-blue-400"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
@@ -61,11 +61,13 @@ function JobRow({ job }: { job: JobApplication }) {
           </div>
 
           {job.role && (
-            <p className="text-sm text-neutral-600 mb-2">{job.role}</p>
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-2">
+              {job.role}
+            </p>
           )}
 
           <div className="flex items-center gap-3 flex-wrap">
-            <span className="text-xs bg-neutral-100 px-2 py-1 rounded-md">
+            <span className="text-xs bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-md">
               {STAGE_LABELS[job.stage]}
             </span>
 
@@ -73,9 +75,9 @@ function JobRow({ job }: { job: JobApplication }) {
               <span
                 className={`
                 text-xs px-2 py-1 rounded-md font-medium
-                ${job.priority === "HIGH" ? "bg-red-100 text-red-700" : ""}
-                ${job.priority === "MEDIUM" ? "bg-yellow-100 text-yellow-700" : ""}
-                ${job.priority === "LOW" ? "bg-neutral-100 text-neutral-700" : ""}
+                ${job.priority === "HIGH" ? "bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300" : ""}
+                ${job.priority === "MEDIUM" ? "bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300" : ""}
+                ${job.priority === "LOW" ? "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300" : ""}
               `}
               >
                 {job.priority}
@@ -88,7 +90,7 @@ function JobRow({ job }: { job: JobApplication }) {
               <div
                 className={`
                 text-xs flex items-center gap-1 font-medium
-                ${isOverdue ? "text-red-600" : "text-neutral-600"}
+                ${isOverdue ? "text-red-600 dark:text-red-400" : "text-neutral-600 dark:text-neutral-400"}
               `}
               >
                 {isOverdue && <AlertCircle className="w-4 h-4" />}
@@ -99,7 +101,7 @@ function JobRow({ job }: { job: JobApplication }) {
           </div>
 
           {job.notes && (
-            <p className="text-sm text-neutral-600 mt-2 line-clamp-2">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-2 line-clamp-2">
               {job.notes}
             </p>
           )}

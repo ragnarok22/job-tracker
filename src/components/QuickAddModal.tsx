@@ -38,14 +38,14 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
         <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="company" className="block text-sm font-medium mb-1">
-              Company <span className="text-red-500">*</span>
+              Company <span className="text-red-500 dark:text-red-400">*</span>
             </label>
             <input
               type="text"
               id="company"
               name="company"
               required
-              className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
               placeholder="e.g., Vercel"
             />
           </div>
@@ -58,7 +58,7 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
               type="text"
               id="role"
               name="role"
-              className="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-neutral-300 dark:border-neutral-700 dark:bg-neutral-800 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600"
               placeholder="e.g., Senior Frontend Engineer"
             />
           </div>
@@ -67,13 +67,13 @@ export function QuickAddModal({ isOpen, onClose }: QuickAddModalProps) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-neutral-300 rounded-md hover:bg-neutral-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-md hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="flex-1 px-4 py-2 bg-blue-600 dark:bg-blue-700 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               Add Job
             </button>
